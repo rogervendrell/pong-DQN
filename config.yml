@@ -1,0 +1,25 @@
+# Training infrastructure configuration.
+# All settings here are passed as CLI flags to rl_zoo3.
+# Algorithm hyperparameters (lr, buffer_size, etc.) live in hyperparams/dqn.yml.
+
+# Environment & algorithm
+algo: dqn
+env: PongNoFrameskip-v4
+
+# Training budget
+# 10M steps is the standard Atari DQN budget; Pong typically converges in ~2M.
+n_timesteps: 10_000_000
+seed: 42
+
+# Evaluation
+eval_freq: 50_000      # run evaluation every N training steps
+eval_episodes: 10      # number of episodes per evaluation
+
+# Checkpointing
+save_freq: 200_000     # save a checkpoint every N training steps
+log_folder: logs
+
+# Weights & Biases
+use_wandb: true
+wandb_project: pong-dqn
+wandb_entity: rogervendrell-universitat-aut-noma-de-barcelona

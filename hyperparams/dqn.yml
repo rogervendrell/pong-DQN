@@ -1,0 +1,66 @@
+# Hyperparameters for DQN on PongNoFrameskip-v4
+# Loaded by rl_zoo3 via the --conf-file argument.
+# These are the default SB3/rl_zoo3 Atari settings (Mnih et al. 2015 baseline).
+# Experiment variations are documented in comments below each parameter.
+
+PongNoFrameskip-v4:
+  # Apply standard Atari preprocessing:
+  #   - No-op reset (up to 30 random NOOPs at episode start for stochasticity)
+  #   - Frame skipping (act every 4 frames, max-pool over last 2)
+  #   - Resize to 84x84 grayscale
+  #   - Clip rewards to {-1, 0, +1}
+  #   - End episode on life loss (treats each life as a separate episode during training)
+  env_wrapper:
+    - stable_baselines3.common.atari_wrappers.AtariWrapper
+
+  # Stack 4 consecutive frames so the agent can infer velocity/direction
+  frame_stack: 4
+
+  # CNN policy (Nature DQN architecture): 3 conv layers + 2 FC layers
+  policy: "CnnPolicy"
+
+  # REPLAY BUFFER
+  # 100k transitions; large enough to decorrelate samples, small enough for RAM.
+  # Experiment: try 500k or 1M for potentially better sample diversity.
+  buffer_size: 100000
+
+  # EXPLORATION SCHEDULE
+  # Linear epsilon decay from 1.0 → exploration_final_eps over the first
+  # exploration_fraction of total timesteps.
+  # Experiment: try exploration_fraction=0.2 for slower annealing.
+  exploration_fraction: 0.1
+  exploration_final_eps: 0.01
+
+  # LEARNING PARAMETERS
+  # Don't start learning until the replay buffer has this many transitions.
+  # Experiment: reduce to 50k to start learning earlier (may be noisier).
+  learning_starts: 100000
+
+  # Adam learning rate.
+  # Experiment: try 5e-5 (more stable but slower) or 5e-4 (faster but unstable).
+  learning_rate: !!float 1e-4
+
+  # Mini-batch size for each gradient update.
+  # Experiment: try 64 for smoother gradients (requires more memory).
+  batch_size: 32
+
+  # GRADIENT UPDATES
+  # Perform one gradient update every train_freq environment steps.
+  train_freq: 4
+
+  # Number of gradient updates per call to train(). 1 = standard DQN.
+  gradient_steps: 1
+
+  # TARGET NETWORK
+  # Copy online weights to target network every N environment steps.
+  # Experiment: try 5000 for slower, more stable target updates.
+  target_update_interval: 1000
+
+  # Total training timesteps — overridden at runtime by config.yml via --n-timesteps.
+  # Must be present here because rl_zoo3 always deletes this key from the YAML
+  # dict during preprocessing, even when the CLI flag takes precedence.
+  n_timesteps: !!float 10e6
+
+  # MEMORY OPTIMIZATION
+  # changes replay buffer layout and can slow down sampling).
+  optimize_memory_usage: False

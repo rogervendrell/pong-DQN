@@ -1,0 +1,10 @@
+stable-baselines3[extra]
+rl_zoo3
+gymnasium[atari]
+ale-py
+autorom[accept-rom-license]
+torch
+wandb
+imageio
+imageio-ffmpeg
+numpy
