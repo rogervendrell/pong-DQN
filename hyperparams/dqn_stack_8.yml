@@ -1,0 +1,31 @@
+# Experiment: frame_stack = 8 (vs. baseline of 4)
+#
+# Hypothesis: stacking 8 frames gives the agent a longer temporal window,
+# which may help it track the ball over more of its trajectory. However, it
+# also doubles the input size to the CNN (84x84x8 vs 84x84x4), increasing
+# the number of parameters in the first conv layer and memory usage.
+# Pong rallies are short, so the extra context may not help — and the larger
+# input could slow convergence.
+#
+# All other hyperparameters are identical to dqn.yml so that frame_stack
+# is the only variable being changed.
+
+PongNoFrameskip-v4:
+  env_wrapper:
+    - stable_baselines3.common.atari_wrappers.AtariWrapper
+
+  # Changed from 4 to 8
+  frame_stack: 8
+
+  policy: "CnnPolicy"
+  buffer_size: 100000
+  exploration_fraction: 0.1
+  exploration_final_eps: 0.01
+  learning_starts: 100000
+  learning_rate: !!float 1e-4
+  batch_size: 32
+  train_freq: 4
+  gradient_steps: 1
+  target_update_interval: 1000
+  n_timesteps: !!float 10e6
+  optimize_memory_usage: False
